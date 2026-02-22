@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  /* Neon Night Color Palette */
+  --color-neon: #39FF14;
+  --color-neon-dim: #2bcc10;
+  --color-neon-glow: rgba(57, 255, 20, 0.4);
+  --color-dark-900: #050505;
+  --color-dark-800: #0a0a0a;
+  --color-dark-700: #111111;
+  --color-dark-600: #1a1a1a;
+  --color-dark-500: #222222;
+  --color-dark-400: #2a2a2a;
+  --color-dark-300: #333333;
+  --color-blue-neon: #00BFFF;
+  --color-orange-fire: #FF6B00;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A0A0A0;
+  --color-text-muted: #606060;
+
+  /* Font Families */
+  --font-display: 'Oswald', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #0a0a0a;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: 0.025em;
+  }
+}
+
+@layer utilities {
+  .neon-glow {
+    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2);
+  }
+  .neon-text {
+    color: #39FF14;
+    text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .gradient-neon {
+    background: linear-gradient(135deg, #39FF14 0%, #00BFFF 100%);
+  }
+  .gradient-dark {
+    background: linear-gradient(180deg, #111111 0%, #050505 100%);
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+}
