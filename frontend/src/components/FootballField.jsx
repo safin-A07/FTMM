@@ -178,7 +178,7 @@ const FootballField = ({ teamA, teamB }) => {
                 <path d="M 24 408 A 12 12 0 0 1 12 396" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1" />
 
                 {/* Players */}
-                {renderPlayers(playersA, teamA?.color || '#39FF14', 'A')}
+                {renderPlayers(playersA, teamA?.color || '#16A34A', 'A')}
                 {renderPlayers(playersB, teamB?.color || '#3B82F6', 'B')}
             </svg>
 
@@ -190,7 +190,7 @@ const FootballField = ({ teamA, teamB }) => {
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 mt-3">
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: teamA?.color || '#39FF14' }}></div>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: teamA?.color || '#16A34A' }}></div>
                     <span className="text-sm text-gray-400">{teamA?.name || 'Team A'}</span>
                 </div>
                 <div className="flex items-center gap-2">

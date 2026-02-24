@@ -82,7 +82,7 @@ const MatchDetailPage = () => {
             <div className="text-center">
                 <div className="text-4xl mb-3">❌</div>
                 <p className="text-gray-400">Match not found</p>
-                <Link to="/matches" className="text-[#39FF14] text-sm mt-2 inline-block">← Back to matches</Link>
+                <Link to="/matches" className="text-[#16A34A] text-sm mt-2 inline-block">← Back to matches</Link>
             </div>
         </div>
     );
@@ -102,31 +102,31 @@ const MatchDetailPage = () => {
                 <div className="glass-card rounded-2xl p-6 mb-4">
                     <div className="flex items-start justify-between mb-2">
                         <h1 className="font-display font-bold text-2xl md:text-3xl text-white">{match.title}</h1>
-                        <span className={`px-3 py-1 text-xs rounded-full font-medium ${match.status === 'upcoming' ? 'bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/30' :
-                            match.status === 'ongoing' ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30' :
+                        <span className={`px-3 py-1 text-xs rounded-full font-medium ${match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
+                            match.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30' :
                                 'bg-gray-500/10 text-gray-400 border border-gray-500/30'
                             }`}>
-                            {match.status === 'ongoing' ? '🔴 Live' : match.status}
+                            {match.status === 'draft' ? 'Not Open Yet' : match.status === 'open' ? 'Open' : match.status}
                         </span>
                     </div>
 
                     <div className="space-y-2 text-sm text-gray-400 mb-5">
                         <div className="flex items-center gap-2">
-                            <FiClock className="text-[#39FF14]" />
+                            <FiClock className="text-[#16A34A]" />
                             {new Date(match.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })} · {match.time}
                         </div>
                         <div className="flex items-center gap-2">
-                            <FiMapPin className="text-[#39FF14]" />
+                            <FiMapPin className="text-[#16A34A]" />
                             {match.location?.name}{match.location?.address ? ` · ${match.location.address}` : ''}
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-[#39FF14] font-bold">৳</span>
+                            <span className="text-[#16A34A] font-bold">৳</span>
                             <span>Match Fee: <span className="text-white font-semibold">{match.matchFee || 0} TK</span></span>
                         </div>
                     </div>
 
                     {/* Countdown */}
-                    {match.status === 'upcoming' && (
+                    {match.status === 'open' && (
                         <div className="mb-5">
                             <p className="text-xs text-gray-600 uppercase tracking-widest mb-3">Match starts in</p>
                             <CountdownTimer targetDate={match.date} targetTime={match.time} />
@@ -143,14 +143,33 @@ const MatchDetailPage = () => {
                         </div>
                         <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                             <div
-                                className={`h-full rounded-full transition-all ${slotPercent >= 100 ? 'bg-red-500' : slotPercent >= 75 ? 'bg-orange-400' : 'bg-[#39FF14]'}`}
+                                className={`h-full rounded-full transition-all ${slotPercent >= 100 ? 'bg-red-500' : slotPercent >= 75 ? 'bg-orange-400' : 'bg-[#16A34A]'}`}
                                 style={{ width: `${slotPercent}%` }}
                             />
                         </div>
                     </div>
 
                     {/* Action Button */}
-                    {match.status === 'upcoming' && (
+                    {match.status === 'draft' && (
+                        <div className="flex gap-3">
+                            <button
+                                disabled
+                                className="flex-1 py-3.5 rounded-xl font-bold text-sm bg-gray-500/10 text-gray-400 border border-gray-500/30 cursor-not-allowed"
+                            >
+                                ❌ Not Open Yet
+                            </button>
+                            {match.teamsPublished && (
+                                <Link
+                                    to={`/matches/${match._id}/teams`}
+                                    className="flex items-center gap-1 px-4 py-3.5 rounded-xl text-sm font-medium border border-[#16A34A]/30 text-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
+                                >
+                                    Teams <FiChevronRight />
+                                </Link>
+                            )}
+                        </div>
+                    )}
+
+                    {match.status === 'open' && (
                         <div className="flex gap-3">
                             {!isJoined && !isWaiting && (
                                 <button
@@ -158,7 +177,7 @@ const MatchDetailPage = () => {
                                     disabled={joining}
                                     className={`flex-1 py-3.5 rounded-xl font-bold text-sm transition-all disabled:opacity-60 ${isFull
                                         ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30'
-                                        : 'bg-[#39FF14] text-black neon-glow hover:bg-[#2bcc10]'
+                                        : 'bg-[#16A34A] text-black neon-glow hover:bg-[#22C55E]'
                                         }`}
                                 >
                                     {joining ? '...' : isFull ? '⏳ Join Waiting List' : '⚽ Join Match'}
@@ -176,7 +195,7 @@ const MatchDetailPage = () => {
                             {match.teamsPublished && (
                                 <Link
                                     to={`/matches/${match._id}/teams`}
-                                    className="flex items-center gap-1 px-4 py-3.5 rounded-xl text-sm font-medium border border-[#39FF14]/30 text-[#39FF14] hover:bg-[#39FF14]/5 transition-all"
+                                    className="flex items-center gap-1 px-4 py-3.5 rounded-xl text-sm font-medium border border-[#16A34A]/30 text-[#16A34A] hover:bg-[#16A34A]/5 transition-all"
                                 >
                                     Teams <FiChevronRight />
                                 </Link>
@@ -197,8 +216,8 @@ const MatchDetailPage = () => {
                     {/* Joined Players */}
                     <div className="glass-card rounded-2xl p-5">
                         <h3 className="font-display font-semibold text-white mb-4 flex items-center gap-2">
-                            <span className="text-[#39FF14]">⚽</span> Player List
-                            <span className="text-xs bg-[#39FF14]/10 text-[#39FF14] px-2 py-0.5 rounded-full ml-auto">{slotsUsed}/{match.maxPlayers}</span>
+                            <span className="text-[#16A34A]">⚽</span> Player List
+                            <span className="text-xs bg-[#16A34A]/10 text-[#16A34A] px-2 py-0.5 rounded-full ml-auto">{slotsUsed}/{match.maxPlayers}</span>
                         </h3>
                         <div className="space-y-2.5 max-h-64 overflow-y-auto scrollbar-hide">
                             {match.joinedPlayers?.length === 0 ? (
@@ -214,7 +233,7 @@ const MatchDetailPage = () => {
                                             <p className="text-xs text-gray-600">{player.position}</p>
                                         </div>
                                         {(player._id || player) === user?._id && (
-                                            <span className="ml-auto text-xs text-[#39FF14] bg-[#39FF14]/10 px-2 py-0.5 rounded-full">You</span>
+                                            <span className="ml-auto text-xs text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded-full">You</span>
                                         )}
                                     </div>
                                 ))

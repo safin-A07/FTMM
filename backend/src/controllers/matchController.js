@@ -1,12 +1,12 @@
 const Match = require('../models/Match');
 const Notification = require('../models/Notification');
 
-// @desc    Get all upcoming matches
+// @desc    Get all matches (draft and open)
 // @route   GET /api/matches
 // @access  Private
 const getMatches = async (req, res) => {
     try {
-        const matches = await Match.find({ status: { $in: ['upcoming', 'ongoing'] } })
+        const matches = await Match.find({ status: { $in: ['draft', 'open'] } })
             .populate('joinedPlayers', 'name position profileImage')
             .populate('waitingList', 'name position profileImage')
             .populate('createdBy', 'name')
@@ -40,7 +40,7 @@ const getMatchById = async (req, res) => {
 const User = require('../models/User');
 const sendEmail = require('../services/emailService');
 
-// @desc    Create a match
+// @desc    Create a match (status: draft - not open yet)
 // @route   POST /api/matches
 // @access  Admin
 const createMatch = async (req, res) => {
@@ -49,29 +49,57 @@ const createMatch = async (req, res) => {
         const match = await Match.create({
             title, date, time, location, maxPlayers, joinDeadline, notes, matchFee,
             createdBy: req.user.id,
+            status: 'draft',
         });
+
+        // No email sent at creation - match is not open yet for joining
+
+        res.status(201).json({ success: true, match });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Open a match for joining (Admin action)
+// @route   POST /api/matches/:id/open
+// @access  Admin
+const openMatch = async (req, res) => {
+    try {
+        const match = await Match.findById(req.params.id);
+        if (!match) {
+            return res.status(404).json({ success: false, message: 'Match not found' });
+        }
+
+        if (match.status !== 'draft') {
+            return res.status(400).json({ success: false, message: 'Only draft matches can be opened' });
+        }
+
+        // Update match status to open
+        match.status = 'open';
+        await match.save();
 
         // Send email notifications to all registered users
         const users = await User.find({}, 'email name');
-        const matchDate = new Date(date).toLocaleDateString();
+        const matchDate = new Date(match.date).toLocaleDateString();
 
         const emailPromises = users.map(user => {
             return sendEmail({
                 to: user.email,
-                subject: `⚽ New Match Posted: ${title}`,
+                subject: `⚽ A new football match is now open for joining!`,
                 message: `
-                    <h1>New Match Alert!</h1>
+                    <h1>Match Now Open!</h1>
                     <p>Hi ${user.name},</p>
-                    <p>A new match has been posted on FTMM!</p>
+                    <p>⚽ A new football match is now open for joining. Limited slots available — join now.</p>
                     <ul>
-                        <li><strong>Match:</strong> ${title}</li>
+                        <li><strong>Match:</strong> ${match.title}</li>
                         <li><strong>Date:</strong> ${matchDate}</li>
-                        <li><strong>Time:</strong> ${time}</li>
-                        <li><strong>Location:</strong> ${location.name}</li>
-                        <li><strong>Fee:</strong> ${matchFee || 'Not specified'} TK</li>
+                        <li><strong>Time:</strong> ${match.time}</li>
+                        <li><strong>Location:</strong> ${match.location.name}</li>
+                        <li><strong>Available Slots:</strong> ${match.maxPlayers - (match.joinedPlayers?.length || 0)} remaining</li>
+                        <li><strong>Fee:</strong> ${match.matchFee || 'Not specified'} TK</li>
                     </ul>
-                    <p>Log in now to join the match!</p>
-                    <a href="${process.env.CLIENT_URL}" style="background-color: #39FF14; color: black; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Join Match</a>
+                    <p>Don't miss out! Click the link below to join:</p>
+                    <a href="${process.env.CLIENT_URL}/matches/${match._id}" style="background-color: #39FF14; color: black; padding: 10px 20px; text-decoration: none; font-weight: bold; border-radius: 5px;">Join Match Now</a>
                 `
             }).catch(err => console.error(`Failed to send email to ${user.email}:`, err.message));
         });
@@ -79,7 +107,7 @@ const createMatch = async (req, res) => {
         // Don't wait for all emails to complete before responding to admin, but trigger them
         Promise.all(emailPromises);
 
-        res.status(201).json({ success: true, match });
+        res.json({ success: true, message: 'Match opened and notifications sent', match });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -93,6 +121,11 @@ const joinMatch = async (req, res) => {
         const match = await Match.findById(req.params.id);
         if (!match) {
             return res.status(404).json({ success: false, message: 'Match not found' });
+        }
+
+        // Check if match is open for joining
+        if (match.status !== 'open') {
+            return res.status(400).json({ success: false, message: 'This match is not open for joining yet' });
         }
 
         const userId = req.user.id;
@@ -210,4 +243,4 @@ const deleteMatch = async (req, res) => {
     }
 };
 
-module.exports = { getMatches, getMatchById, createMatch, joinMatch, leaveMatch, updateMatch, deleteMatch };
+module.exports = { getMatches, getMatchById, createMatch, openMatch, joinMatch, leaveMatch, updateMatch, deleteMatch };

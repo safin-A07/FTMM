@@ -31,7 +31,7 @@ const LandingPage = () => {
                     </Link>
                     <Link
                         to="/register"
-                        className="text-sm font-semibold bg-[#39FF14] text-black px-4 py-2 rounded-lg hover:bg-[#2bcc10] transition-all neon-glow"
+                        className="text-sm font-semibold bg-[#16A34A] text-black px-4 py-2 rounded-lg hover:bg-[#22C55E] transition-all neon-glow"
                     >
                         Get Started
                     </Link>
@@ -42,13 +42,13 @@ const LandingPage = () => {
             <section className="relative min-h-screen flex items-center justify-center px-6 pt-20">
                 {/* Background Effect */}
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#39FF14]/5 rounded-full blur-3xl"></div>
+                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#16A34A]/5 rounded-full blur-3xl"></div>
                     <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
                 </div>
 
                 <div className="relative text-center max-w-3xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-[#39FF14]/20 text-sm text-[#39FF14] mb-6">
-                        <span className="w-2 h-2 bg-[#39FF14] rounded-full animate-pulse"></span>
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-[#16A34A]/20 text-sm text-[#16A34A] mb-6">
+                        <span className="w-2 h-2 bg-[#16A34A] rounded-full animate-pulse"></span>
                         Replace WhatsApp coordination forever
                     </div>
 
@@ -66,7 +66,7 @@ const LandingPage = () => {
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link
                             to="/register"
-                            className="flex items-center gap-2 bg-[#39FF14] text-black font-bold text-lg px-8 py-4 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all duration-200 w-full sm:w-auto justify-center"
+                            className="flex items-center gap-2 bg-[#16A34A] text-black font-bold text-lg px-8 py-4 rounded-xl neon-glow hover:bg-[#22C55E] transition-all duration-200 w-full sm:w-auto justify-center"
                         >
                             Start Playing Free <FiArrowRight />
                         </Link>
@@ -92,8 +92,8 @@ const LandingPage = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {features.map((f, i) => (
-                            <div key={i} className="glass-card rounded-2xl p-6 hover:border-[#39FF14]/20 transition-all group">
-                                <div className="w-10 h-10 rounded-xl bg-[#39FF14]/10 flex items-center justify-center text-[#39FF14] text-xl mb-4 group-hover:bg-[#39FF14]/20 transition-colors">
+                            <div key={i} className="glass-card rounded-2xl p-6 hover:border-[#16A34A]/20 transition-all group">
+                                <div className="w-10 h-10 rounded-xl bg-[#16A34A]/10 flex items-center justify-center text-[#16A34A] text-xl mb-4 group-hover:bg-[#16A34A]/20 transition-colors">
                                     {f.icon}
                                 </div>
                                 <h3 className="font-display font-semibold text-white text-lg mb-2">{f.title}</h3>
@@ -113,11 +113,11 @@ const LandingPage = () => {
                     <div className="space-y-4 text-left">
                         {steps.map((step, i) => (
                             <div key={i} className="flex items-center gap-4 glass-card rounded-xl p-4">
-                                <div className="w-8 h-8 rounded-full bg-[#39FF14]/10 border border-[#39FF14]/30 flex items-center justify-center text-[#39FF14] font-bold text-sm shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 border border-[#16A34A]/30 flex items-center justify-center text-[#16A34A] font-bold text-sm shrink-0">
                                     {i + 1}
                                 </div>
                                 <span className="text-gray-300">{step}</span>
-                                <FiCheckCircle className="text-[#39FF14] ml-auto shrink-0" />
+                                <FiCheckCircle className="text-[#16A34A] ml-auto shrink-0" />
                             </div>
                         ))}
                     </div>
@@ -133,7 +133,7 @@ const LandingPage = () => {
                     <p className="text-gray-500 mb-8">Join thousands of players already on TurfMgr.</p>
                     <Link
                         to="/register"
-                        className="inline-flex items-center gap-2 bg-[#39FF14] text-black font-bold text-lg px-10 py-4 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all"
+                        className="inline-flex items-center gap-2 bg-[#16A34A] text-black font-bold text-lg px-10 py-4 rounded-xl neon-glow hover:bg-[#22C55E] transition-all"
                     >
                         Create Free Account <FiArrowRight />
                     </Link>
@@ -142,7 +142,7 @@ const LandingPage = () => {
 
             {/* Footer */}
             <footer className="border-t border-white/5 px-6 py-8 text-center text-gray-600 text-sm">
-                <p>© 2024 TurfMgr · Built with ⚽ for the beautiful game</p>
+                <p>© 2024 TurfMgr · Built by Safin Hossain for the beautiful game</p>
             </footer>
         </div>
     );

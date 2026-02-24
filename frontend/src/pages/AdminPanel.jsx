@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
+import Swal from 'sweetalert2';
 import { FiPlus, FiUsers, FiCalendar, FiCheckSquare, FiZap, FiX, FiArrowLeft, FiSave, FiCheckCircle } from 'react-icons/fi';
 
 const initialForm = {
@@ -44,7 +45,7 @@ const TeamBuilder = ({ match, onBack, onSave }) => {
             });
 
             const payload = {
-                teamA: buildTeamData(teamA, '#39FF14', 'Team Green'),
+                teamA: buildTeamData(teamA, '#16A34A', 'Team Green'),
                 teamB: buildTeamData(teamB, '#3B82F6', 'Team Blue'),
             };
 
@@ -71,8 +72,8 @@ const TeamBuilder = ({ match, onBack, onSave }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Team A */}
                 <div className="space-y-4">
-                    <div className="flex items-center gap-2 border-b border-[#39FF14]/30 pb-2">
-                        <div className="w-3 h-3 rounded-full bg-[#39FF14]"></div>
+                    <div className="flex items-center gap-2 border-b border-[#16A34A]/30 pb-2">
+                        <div className="w-3 h-3 rounded-full bg-[#16A34A]"></div>
                         <h3 className="font-display font-semibold text-white">Team Green</h3>
                         <span className="text-xs text-gray-600 ml-auto">{teamA.length} players</span>
                     </div>
@@ -96,7 +97,7 @@ const TeamBuilder = ({ match, onBack, onSave }) => {
                             <div key={p._id} className="bg-white/5 p-3 rounded-xl">
                                 <p className="text-white text-sm font-medium mb-2">{p.name}</p>
                                 <div className="flex gap-2">
-                                    <button onClick={() => moveToTeam(p, 'A')} className="flex-1 text-[10px] py-1 bg-[#39FF14]/10 text-[#39FF14] rounded-md border border-[#39FF14]/20 hover:bg-[#39FF14]/20 transition-all">Assign Green</button>
+                                    <button onClick={() => moveToTeam(p, 'A')} className="flex-1 text-[10px] py-1 bg-[#16A34A]/10 text-[#16A34A] rounded-md border border-[#16A34A]/20 hover:bg-[#16A34A]/20 transition-all">Assign Green</button>
                                     <button onClick={() => moveToTeam(p, 'B')} className="flex-1 text-[10px] py-1 bg-blue-500/10 text-blue-400 rounded-md border border-blue-500/20 hover:bg-blue-500/20 transition-all">Assign Blue</button>
                                 </div>
                             </div>
@@ -131,7 +132,7 @@ const TeamBuilder = ({ match, onBack, onSave }) => {
             <button
                 onClick={handlePublish}
                 disabled={loading || unassigned.length > 0}
-                className="w-full mt-8 bg-[#39FF14] text-black font-bold py-4 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all disabled:opacity-50 disabled:hover:bg-[#39FF14]"
+                className="w-full mt-8 bg-[#16A34A] text-black font-bold py-4 rounded-xl neon-glow hover:bg-[#22C55E] transition-all disabled:opacity-50 disabled:hover:bg-[#16A34A]"
             >
                 {loading ? 'Publishing...' : '🚀 Publish Teams'}
             </button>
@@ -171,13 +172,44 @@ const AdminPanel = () => {
     };
 
     const handleDelete = async (matchId) => {
-        if (!confirm('Delete this match?')) return;
+        const result = await Swal.fire({
+            title: 'Delete Match?',
+            text: 'Are you sure you want to delete this match? This action cannot be undone.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#16A34A',
+            cancelButtonColor: '#22c55e',
+            confirmButtonText: 'Yes, Delete',
+            cancelButtonText: 'Cancel',
+            background: '#1a1a2e',
+            color: '#ffffff',
+            confirmButtonClass: 'text-black font-bold',
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
             await api.delete(`/matches/${matchId}`);
             setMatches(prev => prev.filter(m => m._id !== matchId));
-            toast.success('Match deleted');
+            Swal.fire({
+                title: 'Deleted!',
+                text: 'Match has been deleted successfully.',
+                icon: 'success',
+                confirmButtonColor: '#16A34A',
+                background: '#1a1a2e',
+                color: '#ffffff',
+                confirmButtonClass: 'text-black font-bold',
+            });
         } catch {
-            toast.error('Could not delete match');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Could not delete match. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#22c55e',
+                background: '#1a1a2e',
+                color: '#ffffff',
+                confirmButtonClass: 'text-black font-bold',
+            });
         }
     };
 
@@ -189,6 +221,18 @@ const AdminPanel = () => {
             setMatches(res.data.matches);
         } catch (err) {
             throw err;
+        }
+    };
+
+    const handleOpenMatch = async (matchId) => {
+        try {
+            await api.post(`/matches/${matchId}/open`);
+            // Refresh matches to show updated status
+            const res = await api.get('/matches');
+            setMatches(res.data.matches);
+            toast.success('✅ Match opened! Notifications sent to all users.');
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to open match');
         }
     };
 
@@ -214,7 +258,7 @@ const AdminPanel = () => {
         }
     };
 
-    const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-700 focus:outline-none focus:border-[#39FF14]/40 text-sm transition-all";
+    const inputCls = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-700 focus:outline-none focus:border-[#16A34A]/40 text-sm transition-all";
 
     if (builderMatch) {
         return (
@@ -240,7 +284,7 @@ const AdminPanel = () => {
                     </div>
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="flex items-center gap-2 bg-[#39FF14] text-black font-bold px-4 py-2.5 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all text-sm"
+                        className="flex items-center gap-2 bg-[#16A34A] text-black font-bold px-4 py-2.5 rounded-xl neon-glow hover:bg-[#22C55E] transition-all text-sm"
                     >
                         {showForm ? <FiX /> : <FiPlus />} {showForm ? 'Cancel' : 'New Match'}
                     </button>
@@ -256,7 +300,7 @@ const AdminPanel = () => {
                             key={tab.id}
                             onClick={() => setView(tab.id)}
                             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${view === tab.id
-                                ? 'bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/30'
+                                ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30'
                                 : 'text-gray-500 hover:text-gray-300 border border-transparent'
                                 }`}
                         >
@@ -267,7 +311,7 @@ const AdminPanel = () => {
 
                 {/* Create Form */}
                 {showForm && (
-                    <form onSubmit={handleCreate} className="glass-card rounded-2xl p-6 mb-6 border border-[#39FF14]/10">
+                    <form onSubmit={handleCreate} className="glass-card rounded-2xl p-6 mb-6 border border-[#16A34A]/10">
                         <h2 className="font-display font-semibold text-white text-xl mb-5">Create New Match</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2">
@@ -307,7 +351,7 @@ const AdminPanel = () => {
                                 <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Bring water and shin guards..." rows={2} className={inputCls} />
                             </div>
                         </div>
-                        <button type="submit" disabled={loading} className="mt-5 bg-[#39FF14] text-black font-bold py-3 px-6 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all disabled:opacity-60">
+                        <button type="submit" disabled={loading} className="mt-5 bg-[#16A34A] text-black font-bold py-3 px-6 rounded-xl neon-glow hover:bg-[#22C55E] transition-all disabled:opacity-60">
                             {loading ? 'Creating...' : '⚽ Create Match'}
                         </button>
                     </form>
@@ -327,13 +371,22 @@ const AdminPanel = () => {
                                     <div key={match._id} className="glass-card rounded-2xl p-5 hover:border-white/10 transition-all">
                                         <div className="flex items-start justify-between mb-3">
                                             <div>
-                                                <h3 className="font-display font-semibold text-white text-lg">{match.title}</h3>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <h3 className="font-display font-semibold text-white text-lg">{match.title}</h3>
+                                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                                                        match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
+                                                        match.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30' :
+                                                        'bg-gray-500/10 text-gray-400 border border-gray-500/30'
+                                                    }`}>
+                                                        {match.status === 'draft' ? 'Not Open' : match.status === 'open' ? 'Open' : match.status}
+                                                    </span>
+                                                </div>
                                                 <p className="text-sm text-gray-500">
                                                     {new Date(match.date).toLocaleDateString()} · {match.time} · {match.location?.name}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className={`text-sm ${isFull ? 'text-[#39FF14]' : 'text-gray-400'}`}>
+                                                <span className={`text-sm ${isFull ? 'text-[#16A34A]' : 'text-gray-400'}`}>
                                                     <FiUsers className="inline mr-1" />{match.joinedPlayers?.length || 0}/{match.maxPlayers}
                                                 </span>
                                                 <button onClick={() => handleDelete(match._id)} className="text-red-500 hover:text-red-400 text-xs px-2 py-1 border border-red-500/30 rounded-lg transition-colors">
@@ -342,16 +395,24 @@ const AdminPanel = () => {
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">
-                                            {isFull && !match.teamsPublished && (
+                                            {match.status === 'draft' && (
+                                                <button
+                                                    onClick={() => handleOpenMatch(match._id)}
+                                                    className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[#16A34A] text-black font-bold transition-all hover:bg-[#22C55E]"
+                                                >
+                                                    <FiZap /> Open Match
+                                                </button>
+                                            )}
+                                            {isFull && !match.teamsPublished && match.status === 'open' && (
                                                 <button
                                                     onClick={() => setBuilderMatch(match)}
-                                                    className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[#39FF14] text-black font-bold transition-all hover:bg-[#2bcc10]"
+                                                    className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[#16A34A] text-black font-bold transition-all hover:bg-[#22C55E]"
                                                 >
                                                     <FiZap /> Create Manual Teams
                                                 </button>
                                             )}
                                             {match.teamsPublished && (
-                                                <div className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/20">
+                                                <div className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20">
                                                     <FiCheckSquare /> Teams Published
                                                 </div>
                                             )}
@@ -389,7 +450,7 @@ const AdminPanel = () => {
                                                     key={status}
                                                     onClick={() => markAttendance(record.user._id, status)}
                                                     className={`px-2.5 py-1 text-xs rounded-lg border capitalize transition-all ${record.status === status
-                                                        ? status === 'arrived' ? 'bg-[#39FF14]/20 text-[#39FF14] border-[#39FF14]/40'
+                                                        ? status === 'arrived' ? 'bg-[#22C55E]/20 text-[#22C55E] border-[#22C55E]/40'
                                                             : status === 'late' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40'
                                                                 : 'bg-red-500/20 text-red-400 border-red-500/40'
                                                         : 'bg-white/5 text-gray-500 border-white/10 hover:border-white/20'

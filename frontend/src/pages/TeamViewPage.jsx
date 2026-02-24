@@ -42,7 +42,7 @@ const TeamViewPage = () => {
                 <div className="text-5xl mb-4">📋</div>
                 <h2 className="font-display font-bold text-xl text-white mb-2">Teams Not Published Yet</h2>
                 <p className="text-gray-500 text-sm mb-5">The admin hasn't published the teams for this match yet.</p>
-                <Link to={`/matches/${id}`} className="text-[#39FF14] text-sm hover:underline">← Back to match</Link>
+                <Link to={`/matches/${id}`} className="text-[#16A34A] text-sm hover:underline">← Back to match</Link>
             </div>
         </div>
     );

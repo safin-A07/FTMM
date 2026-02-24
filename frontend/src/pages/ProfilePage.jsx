@@ -34,7 +34,7 @@ const ProfilePage = () => {
     };
 
     const positionColors = {
-        Goalkeeper: '#FFD700', Defender: '#3B82F6', Midfielder: '#39FF14', Forward: '#FF6B00', Any: '#A0A0A0'
+        Goalkeeper: '#FFD700', Defender: '#3B82F6', Midfielder: '#8B5CF6', Forward: '#FF6B00', Any: '#A0A0A0'
     };
 
     return (
@@ -64,7 +64,7 @@ const ProfilePage = () => {
                             </span>
                             <span className={`text-xs px-2.5 py-1 rounded-full ${user?.role === 'admin'
                                     ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30'
-                                    : 'bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/20'
+                                    : 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/20'
                                 }`}>
                                 {user?.role === 'admin' ? '🛡️ Admin' : '⚽ Player'}
                             </span>
@@ -89,7 +89,7 @@ const ProfilePage = () => {
                                 <input
                                     value={form.name}
                                     onChange={e => setForm({ ...form, name: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#39FF14]/40 text-sm"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#16A34A]/40 text-sm"
                                 />
                             </div>
                             <div>
@@ -97,7 +97,7 @@ const ProfilePage = () => {
                                 <input
                                     value={form.phone}
                                     onChange={e => setForm({ ...form, phone: e.target.value })}
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#39FF14]/40 text-sm"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#16A34A]/40 text-sm"
                                 />
                             </div>
                             <div>
@@ -105,7 +105,7 @@ const ProfilePage = () => {
                                 <select
                                     value={form.position}
                                     onChange={e => setForm({ ...form, position: e.target.value })}
-                                    className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#39FF14]/40 text-sm"
+                                    className="w-full bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-[#16A34A]/40 text-sm"
                                 >
                                     {positions.map(p => <option key={p} value={p}>{p}</option>)}
                                 </select>
@@ -113,7 +113,7 @@ const ProfilePage = () => {
                             <button
                                 onClick={handleSave}
                                 disabled={loading}
-                                className="w-full flex items-center justify-center gap-2 bg-[#39FF14] text-black font-bold py-3 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all disabled:opacity-60"
+                                className="w-full flex items-center justify-center gap-2 bg-[#16A34A] text-black font-bold py-3 rounded-xl neon-glow hover:bg-[#22C55E] transition-all disabled:opacity-60"
                             >
                                 <FiSave /> {loading ? 'Saving...' : 'Save Changes'}
                             </button>
@@ -127,7 +127,7 @@ const ProfilePage = () => {
                                 { icon: <FiStar />, label: 'Position', value: user?.position },
                             ].map(({ icon, label, value }) => (
                                 <div key={label} className="flex items-center gap-3 p-3 bg-white/3 rounded-xl">
-                                    <span className="text-[#39FF14]">{icon}</span>
+                                    <span className="text-[#16A34A]">{icon}</span>
                                     <div>
                                         <p className="text-xs text-gray-600">{label}</p>
                                         <p className="text-sm text-white">{value || '—'}</p>

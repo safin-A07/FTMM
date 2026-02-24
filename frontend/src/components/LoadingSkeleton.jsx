@@ -12,7 +12,7 @@ const LoadingSkeleton = ({ type = 'card', count = 3 }) => {
             <div className="h-2 bg-white/5 rounded-full mb-4"></div>
             <div className="flex gap-2">
                 <div className="h-10 bg-white/5 rounded-xl flex-1"></div>
-                <div className="h-10 bg-[#39FF14]/5 rounded-xl flex-1"></div>
+                <div className="h-10 bg-[#16A34A]/5 rounded-xl flex-1"></div>
             </div>
         </div>
     );

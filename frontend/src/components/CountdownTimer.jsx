@@ -36,7 +36,7 @@ const CountdownTimer = ({ targetDate, targetTime }) => {
     if (expired) {
         return (
             <div className="flex items-center justify-center gap-2 py-3">
-                <span className="text-lg font-display text-[#39FF14] neon-text animate-pulse">⚽ MATCH TIME!</span>
+                <span className="text-lg font-display text-[#16A34A] neon-text animate-pulse">⚽ MATCH TIME!</span>
             </div>
         );
     }
@@ -63,7 +63,7 @@ const CountdownTimer = ({ targetDate, targetTime }) => {
                         </div>
                     </div>
                     {idx < 3 && (
-                        <span className="text-[#39FF14] font-bold text-xl md:text-2xl ml-3 md:ml-4 animate-pulse">:</span>
+                        <span className="text-[#16A34A] font-bold text-xl md:text-2xl ml-3 md:ml-4 animate-pulse">:</span>
                     )}
                 </div>
             ))}

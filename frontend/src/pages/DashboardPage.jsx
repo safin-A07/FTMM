@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import socket from '../services/socket';
@@ -82,7 +83,7 @@ const DashboardPage = () => {
 
                 {/* Next Match Countdown */}
                 {nextMatch && (
-                    <div className="glass-card rounded-2xl p-6 mb-8 border border-[#39FF14]/10">
+                    <div className="glass-card rounded-2xl p-6 mb-8 border border-[#16A34A]/10">
                         <div className="flex items-center justify-between mb-4">
                             <div>
                                 <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Next Match</p>
@@ -91,7 +92,7 @@ const DashboardPage = () => {
                             </div>
                             <Link
                                 to={`/matches/${nextMatch._id}`}
-                                className="text-xs font-medium text-[#39FF14] hover:underline"
+                                className="text-xs font-medium text-[#16A34A] hover:underline"
                             >
                                 View →
                             </Link>
@@ -108,7 +109,7 @@ const DashboardPage = () => {
                         { label: 'Players Online', value: matches.reduce((a, m) => a + (m.joinedPlayers?.length || 0), 0), icon: <FiTrendingUp /> },
                     ].map((stat, i) => (
                         <div key={i} className="glass-card rounded-xl p-3 md:p-4 text-center">
-                            <div className="text-[#39FF14] text-lg md:text-xl mx-auto mb-1 flex justify-center">{stat.icon}</div>
+                            <div className="text-[#16A34A] text-lg md:text-xl mx-auto mb-1 flex justify-center">{stat.icon}</div>
                             <div className="font-display font-bold text-xl md:text-2xl text-white">{stat.value}</div>
                             <div className="text-gray-600 text-xs mt-0.5">{stat.label}</div>
                         </div>
@@ -118,7 +119,7 @@ const DashboardPage = () => {
                 {/* All Matches */}
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="font-display font-semibold text-xl text-white">Upcoming Matches</h2>
-                    <Link to="/matches" className="text-sm text-[#39FF14] hover:underline">See all →</Link>
+                    <Link to="/matches" className="text-sm text-[#16A34A] hover:underline">See all →</Link>
                 </div>
 
                 {loading ? (

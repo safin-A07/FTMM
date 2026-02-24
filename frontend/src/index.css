@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* Neon Night Color Palette */
-  --color-neon: #39FF14;
-  --color-neon-dim: #2bcc10;
-  --color-neon-glow: rgba(57, 255, 20, 0.4);
+  /* Stadium Green Football Turf Theme */
+  --color-neon: #16A34A;
+  --color-neon-dim: #22C55E;
+  --color-neon-glow: rgba(22, 163, 74, 0.4);
   --color-dark-900: #050505;
   --color-dark-800: #0a0a0a;
   --color-dark-700: #111111;
@@ -27,7 +27,7 @@
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    background-color: #0a0a0a;
+    background-color: #0B0F14;
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -40,11 +40,11 @@
 
 @layer utilities {
   .neon-glow {
-    box-shadow: 0 0 10px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.2);
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.5), 0 0 30px rgba(22, 163, 74, 0.2);
   }
   .neon-text {
-    color: #39FF14;
-    text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+    color: #16A34A;
+    text-shadow: 0 0 10px rgba(22, 163, 74, 0.7);
   }
   .glass-card {
     background: rgba(255, 255, 255, 0.04);
@@ -57,7 +57,7 @@
     border: 1px solid rgba(255, 255, 255, 0.06);
   }
   .gradient-neon {
-    background: linear-gradient(135deg, #39FF14 0%, #00BFFF 100%);
+    background: linear-gradient(135deg, #16A34A 0%, #00BFFF 100%);
   }
   .gradient-dark {
     background: linear-gradient(180deg, #111111 0%, #050505 100%);
@@ -67,4 +67,7 @@
     scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
+
 }
+
+

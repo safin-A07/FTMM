@@ -46,8 +46,8 @@ const matchSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['upcoming', 'ongoing', 'completed', 'cancelled'],
-        default: 'upcoming',
+        enum: ['draft', 'open', 'closed'],
+        default: 'draft',
     },
     matchFee: {
         type: Number,

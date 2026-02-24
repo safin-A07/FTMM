@@ -83,7 +83,7 @@ const MatchListPage = () => {
                             placeholder="Search matches or locations..."
                             value={search}
                             onChange={e => setSearch(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]/40 transition-all"
+                            className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#16A34A]/40 transition-all"
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -93,7 +93,7 @@ const MatchListPage = () => {
                                 key={f}
                                 onClick={() => setFilter(f)}
                                 className={`px-3 py-2 rounded-lg text-sm font-medium capitalize transition-all ${filter === f
-                                        ? 'bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/30'
+                                        ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30'
                                         : 'text-gray-500 hover:text-gray-300'
                                     }`}
                             >

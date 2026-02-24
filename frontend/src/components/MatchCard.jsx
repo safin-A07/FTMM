@@ -21,22 +21,22 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
     const getSlotColor = () => {
         if (slotPercent >= 100) return 'bg-red-500';
         if (slotPercent >= 75) return 'bg-orange-400';
-        return 'bg-[#39FF14]';
+        return 'bg-[#16A34A]';
     };
 
     const getStatusBadge = () => {
-        if (match.status === 'ongoing') return <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">🔴 Live</span>;
-        if (match.status === 'completed') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Completed</span>;
+        if (match.status === 'draft') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Not Open Yet</span>;
+        if (match.status === 'closed') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Closed</span>;
         if (isFull) return <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Full</span>;
-        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#39FF14]/10 text-[#39FF14] border border-[#39FF14]/30">Open</span>;
+        return <span className="px-2 py-0.5 text-xs rounded-full bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30">Open</span>;
     };
 
     return (
-        <div className="glass-card rounded-2xl overflow-hidden hover:border-[#39FF14]/20 transition-all duration-300 hover:shadow-[0_0_20px_rgba(57,255,20,0.08)] group">
+        <div className="glass-card rounded-2xl overflow-hidden hover:border-[#16A34A]/20 transition-all duration-300 hover:shadow-[0_0_20px_rgba(22,163,74,0.08)] group">
             {/* Card Header */}
             <div className="p-5">
                 <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-display font-semibold text-lg text-white group-hover:text-[#39FF14] transition-colors line-clamp-1">
+                    <h3 className="font-display font-semibold text-lg text-white group-hover:text-[#16A34A] transition-colors line-clamp-1">
                         {match.title}
                     </h3>
                     {getStatusBadge()}
@@ -44,11 +44,11 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
 
                 <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <FiClock className="text-[#39FF14] shrink-0" />
+                        <FiClock className="text-[#16A34A] shrink-0" />
                         <span>{dateStr} · {match.time}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <FiMapPin className="text-[#39FF14] shrink-0" />
+                        <FiMapPin className="text-[#16A34A] shrink-0" />
                         <span className="line-clamp-1">{match.location?.name}</span>
                     </div>
                 </div>
@@ -78,7 +78,7 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
                         {match.joinedPlayers.slice(0, 6).map((player, idx) => (
                             <div
                                 key={idx}
-                                className="w-7 h-7 rounded-full bg-gradient-to-br from-[#39FF14]/40 to-blue-500/40 border border-white/10 flex items-center justify-center text-xs font-bold text-white"
+                                className="w-7 h-7 rounded-full bg-gradient-to-br from-[#16A34A]/40 to-blue-500/40 border border-white/10 flex items-center justify-center text-xs font-bold text-white"
                                 title={player.name || 'Player'}
                             >
                                 {(player.name || 'P')[0].toUpperCase()}
@@ -105,20 +105,31 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
                 {match.teamsPublished && (
                     <Link
                         to={`/matches/${match._id}/teams`}
-                        className="flex-[0.4] flex items-center justify-center gap-1 py-2.5 rounded-xl bg-[#39FF14]/10 border border-[#39FF14]/30 text-[#39FF14] text-sm font-medium hover:bg-[#39FF14]/20 transition-all"
+                        className="flex-[0.4] flex items-center justify-center gap-1 py-2.5 rounded-xl bg-[#16A34A]/10 border border-[#16A34A]/30 text-[#16A34A] text-sm font-medium hover:bg-[#16A34A]/20 transition-all"
                     >
                         Teams
                     </Link>
                 )}
 
-                {match.status === 'upcoming' && (
+                {match.status === 'draft' && (
+                    <>
+                        <button
+                            disabled
+                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-gray-500/10 text-gray-400 border border-gray-500/30 cursor-not-allowed"
+                        >
+                            Not Open Yet
+                        </button>
+                    </>
+                )}
+
+                {match.status === 'open' && (
                     <>
                         {!isJoined && !isWaiting && (
                             <button
                                 onClick={() => onJoin(match._id)}
                                 className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${isFull
                                     ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:bg-orange-500/30'
-                                    : 'bg-[#39FF14] text-black hover:bg-[#2bcc10] neon-glow'
+                                    : 'bg-[#16A34A] text-black hover:bg-[#22C55E] neon-glow'
                                     }`}
                             >
                                 {isFull ? 'Join Waitlist' : 'Join Match'}

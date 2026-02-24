@@ -46,7 +46,7 @@ const LoginPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center px-6 bg-dark-800">
       <div className="absolute inset-0">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#39FF14]/5 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-80 h-80 bg-[#16A34A]/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative w-full max-w-md">
@@ -79,7 +79,7 @@ const LoginPage = () => {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]/50 focus:ring-1 focus:ring-[#39FF14]/20 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#16A34A]/50 focus:ring-1 focus:ring-[#16A34A]/20 transition-all"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ const LoginPage = () => {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#39FF14]/50 focus:ring-1 focus:ring-[#39FF14]/20 transition-all"
+                className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 focus:outline-none focus:border-[#16A34A]/50 focus:ring-1 focus:ring-[#16A34A]/20 transition-all"
               />
             </div>
           </div>
@@ -104,7 +104,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 bg-[#39FF14] text-black font-bold py-3.5 rounded-xl neon-glow hover:bg-[#2bcc10] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center gap-2 bg-[#16A34A] text-black font-bold py-3.5 rounded-xl neon-glow hover:bg-[#22C55E] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {loading ? (
               <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -121,7 +121,7 @@ const LoginPage = () => {
           Don't have an account?{" "}
           <Link
             to="/register"
-            className="text-[#39FF14] hover:underline font-medium"
+            className="text-[#16A34A] hover:underline font-medium"
           >
             Register
           </Link>

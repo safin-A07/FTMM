@@ -37,7 +37,7 @@ const Navbar = () => {
                             key={link.to}
                             to={link.to}
                             className={`flex items-center gap-2 text-sm font-medium transition-all duration-200 ${isActive(link.to)
-                                    ? 'neon-text border-b-2 border-[#39FF14] pb-1'
+                                    ? 'neon-text border-b-2 border-[#16A34A] pb-1'
                                     : 'text-gray-400 hover:text-white'
                                 }`}
                         >
@@ -66,11 +66,11 @@ const Navbar = () => {
                             key={link.to}
                             to={link.to}
                             className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 ${isActive(link.to)
-                                    ? 'text-[#39FF14]'
+                                    ? 'text-[#16A34A]'
                                     : 'text-gray-500 hover:text-gray-300'
                                 }`}
                         >
-                            <span className={`text-xl ${isActive(link.to) ? 'neon-glow rounded-full p-1 bg-[#39FF14]/10' : ''}`}>
+                            <span className={`text-xl ${isActive(link.to) ? 'neon-glow rounded-full p-1 bg-[#16A34A]/10' : ''}`}>
                                 {link.icon}
                             </span>
                             <span className="text-[10px] font-medium">{link.label}</span>
