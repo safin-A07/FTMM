@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { FiZap, FiUsers, FiClock, FiMapPin, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import bgHero from '../assets/a-soccer-field-with-lights-on-it-free-photo.jpeg';
 
 const LandingPage = () => {
     const features = [
@@ -39,14 +40,14 @@ const LandingPage = () => {
             </header>
 
             {/* Hero Section */}
-            <section className="relative min-h-screen flex items-center justify-center px-6 pt-20">
-                {/* Background Effect */}
-                <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-[#16A34A]/5 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
-                </div>
+            <section
+                className="relative min-h-screen flex items-center justify-center px-6 pt-20 bg-cover bg-center"
+                style={{ backgroundImage: `url(${bgHero})` }}
+            >
+                {/* overlay */}
+                <div className="absolute inset-0 bg-black/50" />
 
-                <div className="relative text-center max-w-3xl mx-auto">
+                <div className="relative z-10 text-center max-w-3xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card border border-[#16A34A]/20 text-sm text-[#16A34A] mb-6">
                         <span className="w-2 h-2 bg-[#16A34A] rounded-full animate-pulse"></span>
                         Replace WhatsApp coordination forever
@@ -78,7 +79,7 @@ const LandingPage = () => {
                         </Link>
                     </div>
 
-                    <p className="text-gray-600 text-sm mt-6">Free to use · No credit card required · Mobile-first</p>
+                    <p className="text-white text-sm mt-6">Free to use · No credit card required · Mobile-first</p>
                 </div>
             </section>
 

@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import socket from '../services/socket';
 import CountdownTimer from '../components/CountdownTimer';
+import AdminScoreManagement from '../components/AdminScoreManagement';
+import ScoreDetailModal from '../components/ScoreDetailModal';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import toast from 'react-hot-toast';
 import { FiMapPin, FiClock, FiUsers, FiArrowLeft, FiChevronRight } from 'react-icons/fi';
@@ -15,6 +17,8 @@ const MatchDetailPage = () => {
     const [match, setMatch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [joining, setJoining] = useState(false);
+    const [showScoreManagement, setShowScoreManagement] = useState(false);
+    const [showScoreDetail, setShowScoreDetail] = useState(false);
 
     useEffect(() => {
         api.get(`/matches/${id}`)
@@ -102,12 +106,23 @@ const MatchDetailPage = () => {
                 <div className="glass-card rounded-2xl p-6 mb-4">
                     <div className="flex items-start justify-between mb-2">
                         <h1 className="font-display font-bold text-2xl md:text-3xl text-white">{match.title}</h1>
-                        <span className={`px-3 py-1 text-xs rounded-full font-medium ${match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
-                            match.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30' :
-                                'bg-gray-500/10 text-gray-400 border border-gray-500/30'
-                            }`}>
-                            {match.status === 'draft' ? 'Not Open Yet' : match.status === 'open' ? 'Open' : match.status}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className={`px-3 py-1 text-xs rounded-full font-medium ${match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
+                                match.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30' :
+                                match.status === 'finished' ? 'bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30' :
+                                    'bg-gray-500/10 text-gray-400 border border-gray-500/30'
+                                }`}>
+                                {match.status === 'draft' ? 'Not Open Yet' : match.status === 'open' ? 'Open' : match.status === 'finished' ? 'Finished' : match.status}
+                            </span>
+                            {match.status === 'finished' && user?.role === 'admin' && (
+                                <button
+                                    onClick={() => setShowScoreManagement(true)}
+                                    className="px-3 py-1 text-xs rounded-full font-medium bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30 hover:bg-[#16A34A]/30 transition-all"
+                                >
+                                    Manage Score
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <div className="space-y-2 text-sm text-gray-400 mb-5">
@@ -203,6 +218,24 @@ const MatchDetailPage = () => {
                         </div>
                     )}
 
+                    {match.status === 'finished' && (
+                        <div className="flex gap-3">
+                            {match.resultPublished && (
+                                <button
+                                    onClick={() => setShowScoreDetail(true)}
+                                    className="flex-1 py-3.5 rounded-xl font-bold text-sm bg-[#16A34A] text-black neon-glow hover:bg-[#22C55E] transition-all"
+                                >
+                                    ⚽ View Score
+                                </button>
+                            )}
+                            {!match.resultPublished && (
+                                <div className="flex-1 py-3.5 rounded-xl font-bold text-sm bg-gray-500/20 text-gray-400 border border-gray-500/30 text-center">
+                                    ⏳ Result Coming Soon
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {match.notes && (
                         <div className="mt-4 p-3 rounded-xl bg-white/3 border border-white/5">
                             <p className="text-xs text-gray-600 uppercase tracking-widest mb-1">Notes</p>
@@ -267,6 +300,22 @@ const MatchDetailPage = () => {
                         </div>
                     )}
                 </div>
+
+                {/* Score Management Modal - Admin only */}
+                {showScoreManagement && (
+                    <AdminScoreManagement
+                        match={match}
+                        onClose={() => setShowScoreManagement(false)}
+                    />
+                )}
+
+                {/* Score Detail Modal */}
+                {showScoreDetail && (
+                    <ScoreDetailModal
+                        match={match}
+                        onClose={() => setShowScoreDetail(false)}
+                    />
+                )}
             </div>
         </div>
     );

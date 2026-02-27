@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiMapPin, FiClock, FiUsers, FiChevronRight } from 'react-icons/fi';
 
@@ -25,6 +24,8 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
     };
 
     const getStatusBadge = () => {
+        if (match.status === 'finished') return <span className="px-2 py-0.5 text-xs rounded-full bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30">Finished</span>;
+        if (match.status === 'ongoing') return <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold animate-pulse">Ongoing</span>;
         if (match.status === 'draft') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Not Open Yet</span>;
         if (match.status === 'closed') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Closed</span>;
         if (isFull) return <span className="px-2 py-0.5 text-xs rounded-full bg-red-500/20 text-red-400 border border-red-500/30">Full</span>;
@@ -122,35 +123,51 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
                     </>
                 )}
 
-                {match.status === 'open' && (
+                {(match.status === 'open' || match.status === 'ongoing') && (
                     <>
                         {!isJoined && !isWaiting && (
                             <button
                                 onClick={() => onJoin(match._id)}
+                                disabled={match.status === 'ongoing'}
                                 className={`flex-1 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${isFull
                                     ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:bg-orange-500/30'
-                                    : 'bg-[#16A34A] text-black hover:bg-[#22C55E] neon-glow'
+                                    : match.status === 'ongoing'
+                                        ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30 cursor-not-allowed'
+                                        : 'bg-[#16A34A] text-black hover:bg-[#22C55E] neon-glow'
                                     }`}
                             >
-                                {isFull ? 'Join Waitlist' : 'Join Match'}
+                                {match.status === 'ongoing' ? 'In Progress' : isFull ? 'Join Waitlist' : 'Join Match'}
                             </button>
                         )}
                         {isJoined && (
                             <button
                                 onClick={() => onLeave(match._id)}
-                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all"
+                                disabled={match.status === 'ongoing'}
+                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-red-500/10 text-red-400 border border-red-500/30 hover:bg-red-500/20 transition-all disabled:opacity-50"
                             >
-                                ✓ Joined · Leave
+                                ✓ Joined {match.status === 'ongoing' ? '' : '· Leave'}
                             </button>
                         )}
                         {isWaiting && (
                             <button
                                 onClick={() => onLeave(match._id)}
-                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/30 hover:bg-orange-500/20 transition-all"
+                                disabled={match.status === 'ongoing'}
+                                className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/30 hover:bg-orange-500/20 transition-all disabled:opacity-50"
                             >
-                                ⏳ Waitlisted · Leave
+                                ⏳ Waitlisted {match.status === 'ongoing' ? '' : '· Leave'}
                             </button>
                         )}
+                    </>
+                )}
+
+                {match.status === 'finished' && (
+                    <>
+                        <Link
+                            to={`/matches/${match._id}`}
+                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-[#16A34A]/10 border border-[#16A34A]/30 text-[#16A34A] hover:bg-[#16A34A]/20 transition-all"
+                        >
+                            {match.resultPublished ? 'View Score' : 'Match Finished'}
+                        </Link>
                     </>
                 )}
             </div>

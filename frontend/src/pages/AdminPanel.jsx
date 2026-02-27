@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { FiPlus, FiUsers, FiCalendar, FiCheckSquare, FiZap, FiX, FiArrowLeft, FiSave, FiCheckCircle } from 'react-icons/fi';
 
 const initialForm = {
-    title: '', date: '', time: '', location: { name: '', address: '' },
+    title: '', date: '', time: '', endingTime: '', location: { name: '', address: '' },
     maxPlayers: 14, notes: '', joinDeadline: '', matchFee: 0
 };
 
@@ -150,22 +150,32 @@ const AdminPanel = () => {
     const [view, setView] = useState('matches');
     const [loading, setLoading] = useState(false);
     const [builderMatch, setBuilderMatch] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editingMatchId, setEditingMatchId] = useState(null);
 
     useEffect(() => {
         api.get('/matches').then(res => setMatches(res.data.matches)).catch(() => { });
     }, []);
 
-    const handleCreate = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await api.post('/matches', form);
-            setMatches(prev => [res.data.match, ...prev]);
+            if (isEditing) {
+                const res = await api.put(`/matches/${editingMatchId}`, form);
+                setMatches(prev => prev.map(m => m._id === editingMatchId ? res.data.match : m));
+                toast.success('✅ Match updated!');
+            } else {
+                const res = await api.post('/matches', form);
+                setMatches(prev => [res.data.match, ...prev]);
+                toast.success('✅ Match created!');
+            }
             setShowForm(false);
             setForm(initialForm);
-            toast.success('✅ Match created!');
+            setIsEditing(false);
+            setEditingMatchId(null);
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Failed to create match');
+            toast.error(err.response?.data?.message || `Failed to ${isEditing ? 'update' : 'create'} match`);
         } finally {
             setLoading(false);
         }
@@ -236,6 +246,27 @@ const AdminPanel = () => {
         }
     };
 
+    const handleEdit = (match) => {
+        setForm({
+            title: match.title,
+            date: new Date(match.date).toISOString().split('T')[0],
+            time: match.time,
+            endingTime: match.endingTime || '',
+            location: {
+                name: match.location?.name || '',
+                address: match.location?.address || ''
+            },
+            maxPlayers: match.maxPlayers,
+            notes: match.notes || '',
+            joinDeadline: match.joinDeadline ? new Date(match.joinDeadline).toISOString().slice(0, 16) : '',
+            matchFee: match.matchFee || 0
+        });
+        setIsEditing(true);
+        setEditingMatchId(match._id);
+        setShowForm(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const handleInitAttendance = async (matchId) => {
         try {
             await api.post(`/attendance/${matchId}/init`);
@@ -283,7 +314,14 @@ const AdminPanel = () => {
                         <p className="text-gray-600 text-sm">Welcome, {user?.name}</p>
                     </div>
                     <button
-                        onClick={() => setShowForm(!showForm)}
+                        onClick={() => {
+                            if (showForm) {
+                                setIsEditing(false);
+                                setEditingMatchId(null);
+                                setForm(initialForm);
+                            }
+                            setShowForm(!showForm);
+                        }}
                         className="flex items-center gap-2 bg-[#16A34A] text-black font-bold px-4 py-2.5 rounded-xl neon-glow hover:bg-[#22C55E] transition-all text-sm"
                     >
                         {showForm ? <FiX /> : <FiPlus />} {showForm ? 'Cancel' : 'New Match'}
@@ -309,10 +347,10 @@ const AdminPanel = () => {
                     ))}
                 </div>
 
-                {/* Create Form */}
+                {/* Create/Edit Form */}
                 {showForm && (
-                    <form onSubmit={handleCreate} className="glass-card rounded-2xl p-6 mb-6 border border-[#16A34A]/10">
-                        <h2 className="font-display font-semibold text-white text-xl mb-5">Create New Match</h2>
+                    <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 mb-6 border border-[#16A34A]/10">
+                        <h2 className="font-display font-semibold text-white text-xl mb-5">{isEditing ? 'Edit Match' : 'Create New Match'}</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="md:col-span-2">
                                 <label className="text-xs text-gray-500 mb-1 block">Match Title</label>
@@ -323,8 +361,12 @@ const AdminPanel = () => {
                                 <input type="date" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} required className={inputCls} />
                             </div>
                             <div>
-                                <label className="text-xs text-gray-500 mb-1 block">Time</label>
+                                <label className="text-xs text-gray-500 mb-1 block">Starting Time</label>
                                 <input type="time" value={form.time} onChange={e => setForm({ ...form, time: e.target.value })} required className={inputCls} />
+                            </div>
+                            <div>
+                                <label className="text-xs text-gray-500 mb-1 block">Ending Time</label>
+                                <input type="time" value={form.endingTime} onChange={e => setForm({ ...form, endingTime: e.target.value })} required className={inputCls} />
                             </div>
                             <div>
                                 <label className="text-xs text-gray-500 mb-1 block">Venue Name</label>
@@ -352,7 +394,7 @@ const AdminPanel = () => {
                             </div>
                         </div>
                         <button type="submit" disabled={loading} className="mt-5 bg-[#16A34A] text-black font-bold py-3 px-6 rounded-xl neon-glow hover:bg-[#22C55E] transition-all disabled:opacity-60">
-                            {loading ? 'Creating...' : '⚽ Create Match'}
+                            {loading ? (isEditing ? 'Updating...' : 'Creating...') : (isEditing ? '💾 Update Match' : '⚽ Create Match')}
                         </button>
                     </form>
                 )}
@@ -373,25 +415,29 @@ const AdminPanel = () => {
                                             <div>
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <h3 className="font-display font-semibold text-white text-lg">{match.title}</h3>
-                                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                                                        match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
+                                                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${match.status === 'draft' ? 'bg-gray-500/10 text-gray-400 border border-gray-500/30' :
                                                         match.status === 'open' ? 'bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30' :
-                                                        'bg-gray-500/10 text-gray-400 border border-gray-500/30'
-                                                    }`}>
+                                                            'bg-gray-500/10 text-gray-400 border border-gray-500/30'
+                                                        }`}>
                                                         {match.status === 'draft' ? 'Not Open' : match.status === 'open' ? 'Open' : match.status}
                                                     </span>
                                                 </div>
                                                 <p className="text-sm text-gray-500">
-                                                    {new Date(match.date).toLocaleDateString()} · {match.time} · {match.location?.name}
+                                                    {new Date(match.date).toLocaleDateString()} · Slot: {match.time} - {match.endingTime || 'N/A'} · {match.location?.name}
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <span className={`text-sm ${isFull ? 'text-[#16A34A]' : 'text-gray-400'}`}>
                                                     <FiUsers className="inline mr-1" />{match.joinedPlayers?.length || 0}/{match.maxPlayers}
                                                 </span>
-                                                <button onClick={() => handleDelete(match._id)} className="text-red-500 hover:text-red-400 text-xs px-2 py-1 border border-red-500/30 rounded-lg transition-colors">
-                                                    Delete
-                                                </button>
+                                                <div className="flex gap-1">
+                                                    <button onClick={() => handleEdit(match)} className="text-blue-400 hover:text-blue-300 text-xs px-2 py-1 border border-blue-400/30 rounded-lg transition-colors">
+                                                        Edit
+                                                    </button>
+                                                    <button onClick={() => handleDelete(match._id)} className="text-red-500 hover:text-red-400 text-xs px-2 py-1 border border-red-500/30 rounded-lg transition-colors">
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2">

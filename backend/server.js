@@ -51,6 +51,12 @@ const startServer = async () => {
     console.log("✅ Better Auth initialized");
 
     // 5. Routes
+    console.log('authRoutes type', typeof authRoutes);
+    console.log('matchRoutes type', typeof matchRoutes);
+    console.log('teamRoutes type', typeof teamRoutes);
+    console.log('attendanceRoutes type', typeof attendanceRoutes);
+    console.log('notificationRoutes type', typeof notificationRoutes);
+
     app.use("/api/auth", authRoutes);
     app.all("/api/auth/*", toNodeHandler(auth));
 
@@ -77,18 +83,40 @@ const startServer = async () => {
       try {
         const Match = require("./src/models/Match");
         const now = new Date();
-        const upcoming = await Match.find({ status: "upcoming" });
-        for (const match of upcoming) {
-          const matchDateTime = new Date(match.date);
-          const [hours, minutes] = match.time.split(":");
-          matchDateTime.setHours(parseInt(hours), parseInt(minutes));
-          if (matchDateTime <= now) {
-            match.status = "ongoing";
+        // Check for matches that should be 'ongoing' or 'finished'
+        const matches = await Match.find({ status: { $in: ['open', 'ongoing'] } });
+
+        for (const match of matches) {
+          const startDateTime = new Date(match.date);
+          const [startHours, startMinutes] = match.time.split(":");
+          startDateTime.setHours(parseInt(startHours), parseInt(startMinutes));
+
+          const endDateTime = new Date(match.date);
+          if (match.endingTime) {
+            const [endHours, endMinutes] = match.endingTime.split(":");
+            endDateTime.setHours(parseInt(endHours), parseInt(endMinutes));
+          } else {
+            // Default behavior if endingTime is missing (e.g. legacy matches): 
+            // Assume match lasts 2 hours for 'finished' logic
+            endDateTime.setHours(startDateTime.getHours() + 2, startDateTime.getMinutes());
+          }
+
+          let newStatus = null;
+
+          if (now >= endDateTime) {
+            if (match.status !== 'finished') newStatus = 'finished';
+          } else if (now >= startDateTime) {
+            if (match.status !== 'ongoing') newStatus = 'ongoing';
+          }
+
+          if (newStatus) {
+            match.status = newStatus;
             await match.save();
             io.emit("match_status_changed", {
               matchId: match._id,
-              status: "ongoing",
+              status: newStatus,
             });
+            console.log(`Match ${match._id} (${match.title}) status updated to: ${newStatus}`);
           }
         }
       } catch (err) {

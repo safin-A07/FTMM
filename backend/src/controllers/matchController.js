@@ -6,11 +6,11 @@ const Notification = require('../models/Notification');
 // @access  Private
 const getMatches = async (req, res) => {
     try {
-        const matches = await Match.find({ status: { $in: ['draft', 'open'] } })
+        const matches = await Match.find({ status: { $in: ['draft', 'open', 'ongoing', 'finished'] } })
             .populate('joinedPlayers', 'name position profileImage')
             .populate('waitingList', 'name position profileImage')
             .populate('createdBy', 'name')
-            .sort({ date: 1 });
+            .sort({ date: 1, time: 1 });
 
         res.json({ success: true, count: matches.length, matches });
     } catch (error) {
@@ -45,9 +45,9 @@ const sendEmail = require('../services/emailService');
 // @access  Admin
 const createMatch = async (req, res) => {
     try {
-        const { title, date, time, location, maxPlayers, joinDeadline, notes, matchFee } = req.body;
+        const { title, date, time, endingTime, location, maxPlayers, joinDeadline, notes, matchFee } = req.body;
         const match = await Match.create({
-            title, date, time, location, maxPlayers, joinDeadline, notes, matchFee,
+            title, date, time, endingTime, location, maxPlayers, joinDeadline, notes, matchFee,
             createdBy: req.user.id,
             status: 'draft',
         });
@@ -93,7 +93,7 @@ const openMatch = async (req, res) => {
                     <ul>
                         <li><strong>Match:</strong> ${match.title}</li>
                         <li><strong>Date:</strong> ${matchDate}</li>
-                        <li><strong>Time:</strong> ${match.time}</li>
+                        <li><strong>Slot:</strong> ${match.time} - ${match.endingTime || 'N/A'}</li>
                         <li><strong>Location:</strong> ${match.location.name}</li>
                         <li><strong>Available Slots:</strong> ${match.maxPlayers - (match.joinedPlayers?.length || 0)} remaining</li>
                         <li><strong>Fee:</strong> ${match.matchFee || 'Not specified'} TK</li>

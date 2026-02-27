@@ -14,6 +14,9 @@ const matchSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Match time is required'],
     },
+    endingTime: {
+        type: String,
+    },
     location: {
         name: { type: String, required: true },
         address: { type: String, default: '' },
@@ -46,7 +49,7 @@ const matchSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['draft', 'open', 'closed'],
+        enum: ['draft', 'open', 'ongoing', 'finished'],
         default: 'draft',
     },
     matchFee: {

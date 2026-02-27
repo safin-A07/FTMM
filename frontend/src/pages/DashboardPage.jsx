@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import socket from '../services/socket';
 import MatchCard from '../components/MatchCard';
+import MatchTimeline from '../components/MatchTimeline';
 import CountdownTimer from '../components/CountdownTimer';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import toast from 'react-hot-toast';
@@ -64,7 +65,8 @@ const DashboardPage = () => {
         m.waitingList?.some(p => (p._id || p) === user?._id)
     );
 
-    const nextMatch = userMatches.find(m => m.status === 'upcoming');
+    const upcomingMatches = matches.filter(m => m.status === 'open' || m.status === 'ongoing');
+    const nextMatch = userMatches.find(m => m.status === 'open' || m.status === 'ongoing');
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
@@ -104,9 +106,9 @@ const DashboardPage = () => {
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-3 mb-8">
                     {[
-                        { label: 'Open Matches', value: matches.filter(m => m.status === 'upcoming').length, icon: <FiCalendar /> },
+                        { label: 'Open Matches', value: matches.filter(m => m.status === 'open').length, icon: <FiCalendar /> },
                         { label: 'My Matches', value: userMatches.length, icon: <FiUsers /> },
-                        { label: 'Players Online', value: matches.reduce((a, m) => a + (m.joinedPlayers?.length || 0), 0), icon: <FiTrendingUp /> },
+                        { label: 'Players Online', value: matches.filter(m => m.status === 'open' || m.status === 'ongoing').reduce((a, m) => a + (m.joinedPlayers?.length || 0), 0), icon: <FiTrendingUp /> },
                     ].map((stat, i) => (
                         <div key={i} className="glass-card rounded-xl p-3 md:p-4 text-center">
                             <div className="text-[#16A34A] text-lg md:text-xl mx-auto mb-1 flex justify-center">{stat.icon}</div>
@@ -124,15 +126,15 @@ const DashboardPage = () => {
 
                 {loading ? (
                     <LoadingSkeleton type="card" count={3} />
-                ) : matches.length === 0 ? (
+                ) : upcomingMatches.length === 0 ? (
                     <div className="glass-card rounded-2xl p-12 text-center">
                         <div className="text-5xl mb-4">⚽</div>
                         <h3 className="font-display font-semibold text-white text-xl mb-2">No upcoming matches</h3>
                         <p className="text-gray-500 text-sm">Check back later or ask your admin to create one.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {matches.slice(0, 6).map(match => (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+                        {upcomingMatches.slice(0, 6).map(match => (
                             <MatchCard
                                 key={match._id}
                                 match={match}
@@ -143,6 +145,12 @@ const DashboardPage = () => {
                         ))}
                     </div>
                 )}
+
+                {/* Match Timeline */}
+                <div className="mb-4">
+                    <h2 className="font-display font-semibold text-xl text-white">Match Timeline</h2>
+                </div>
+                <MatchTimeline />
             </div>
         </div>
     );
