@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FiPlus, FiTrash2, FiLoader, FiX } from 'react-icons/fi';
-import axios from 'axios';
+import api from '../services/api';
 import toast from 'react-hot-toast';
 
 const AdminScoreManagement = ({ match, onClose }) => {
@@ -54,7 +54,7 @@ const AdminScoreManagement = ({ match, onClose }) => {
     const handleSaveDraft = async () => {
         try {
             setSavingDraft(true);
-            await axios.post(`/api/results/${match._id}`, {
+            await api.post(`/results/${match._id}`, {
                 teamAScore: parseInt(teamAScore),
                 teamBScore: parseInt(teamBScore),
                 scorers: scorers.map(s => ({
@@ -64,9 +64,8 @@ const AdminScoreManagement = ({ match, onClose }) => {
                     assists: parseInt(s.assists) || 0,
                     team: s.team
                 })),
-                manOfTheMatch: manOfTheMatch || null,
-                summary,
-                published: false
+                manOfTheMatch: { name: manOfTheMatch, id: null },
+                summary
             });
             toast.success('Result saved as draft');
             onClose();
@@ -80,7 +79,8 @@ const AdminScoreManagement = ({ match, onClose }) => {
     const handlePublish = async () => {
         try {
             setPublishing(true);
-            await axios.post(`/api/results/${match._id}`, {
+            // 1. Save data
+            await api.post(`/results/${match._id}`, {
                 teamAScore: parseInt(teamAScore),
                 teamBScore: parseInt(teamBScore),
                 scorers: scorers.map(s => ({
@@ -90,11 +90,13 @@ const AdminScoreManagement = ({ match, onClose }) => {
                     assists: parseInt(s.assists) || 0,
                     team: s.team
                 })),
-                manOfTheMatch: manOfTheMatch || null,
-                summary,
-                published: true
+                manOfTheMatch: { name: manOfTheMatch, id: null },
+                summary
             });
-            await axios.put(`/api/results/${match._id}/publish`);
+
+            // 2. Mark as published
+            await api.put(`/results/${match._id}/publish`);
+
             toast.success('Result published and visible to users');
             onClose();
         } catch (err) {

@@ -24,7 +24,22 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
     };
 
     const getStatusBadge = () => {
-        if (match.status === 'finished') return <span className="px-2 py-0.5 text-xs rounded-full bg-[#16A34A]/20 text-[#16A34A] border border-[#16A34A]/30">Finished</span>;
+        const now = new Date();
+        const startDateTime = new Date(match.date);
+        const [hours, minutes] = match.time.split(':');
+        startDateTime.setHours(parseInt(hours), parseInt(minutes));
+
+        const endDateTime = new Date(startDateTime);
+        if (match.endingTime) {
+            const [eHours, eMinutes] = match.endingTime.split(':');
+            endDateTime.setHours(parseInt(eHours), parseInt(eMinutes));
+        } else {
+            endDateTime.setHours(startDateTime.getHours() + 2);
+        }
+
+        const isPast = now >= endDateTime;
+
+        if (match.status === 'finished' || isPast) return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Finished</span>;
         if (match.status === 'ongoing') return <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 font-bold animate-pulse">Ongoing</span>;
         if (match.status === 'draft') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Not Open Yet</span>;
         if (match.status === 'closed') return <span className="px-2 py-0.5 text-xs rounded-full bg-gray-500/20 text-gray-400 border border-gray-500/30">Closed</span>;
@@ -164,7 +179,7 @@ const MatchCard = ({ match, onJoin, onLeave, currentUserId }) => {
                     <>
                         <Link
                             to={`/matches/${match._id}`}
-                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-[#16A34A]/10 border border-[#16A34A]/30 text-[#16A34A] hover:bg-[#16A34A]/20 transition-all"
+                            className="flex-1 py-2.5 rounded-xl text-sm font-semibold bg-white/5 border border-white/10 text-gray-400 hover:bg-white/10 hover:text-white transition-all"
                         >
                             {match.resultPublished ? 'View Score' : 'Match Finished'}
                         </Link>

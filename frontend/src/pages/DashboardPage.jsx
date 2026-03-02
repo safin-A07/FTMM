@@ -65,8 +65,28 @@ const DashboardPage = () => {
         m.waitingList?.some(p => (p._id || p) === user?._id)
     );
 
-    const upcomingMatches = matches.filter(m => m.status === 'open' || m.status === 'ongoing');
-    const nextMatch = userMatches.find(m => m.status === 'open' || m.status === 'ongoing');
+    const isMatchPast = (match) => {
+        const now = new Date();
+        const startDateTime = new Date(match.date);
+        const [hours, minutes] = match.time.split(':');
+        startDateTime.setHours(parseInt(hours), parseInt(minutes));
+
+        const endDateTime = new Date(startDateTime);
+        if (match.endingTime) {
+            const [eHours, eMinutes] = match.endingTime.split(':');
+            endDateTime.setHours(parseInt(eHours), parseInt(eMinutes));
+        } else {
+            endDateTime.setHours(startDateTime.getHours() + 2);
+        }
+        return now >= endDateTime;
+    };
+
+    const upcomingMatches = matches.filter(m =>
+        (m.status === 'open' || m.status === 'ongoing') && !isMatchPast(m)
+    );
+    const nextMatch = userMatches.find(m =>
+        (m.status === 'open' || m.status === 'ongoing') && !isMatchPast(m)
+    );
     const hour = new Date().getHours();
     const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
