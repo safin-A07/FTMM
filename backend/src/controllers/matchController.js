@@ -243,4 +243,73 @@ const deleteMatch = async (req, res) => {
     }
 };
 
-module.exports = { getMatches, getMatchById, createMatch, openMatch, joinMatch, leaveMatch, updateMatch, deleteMatch };
+// @desc    Save match result draft
+// @route   POST /api/results/:id
+// @access  Admin
+const saveResult = async (req, res) => {
+    try {
+        const { teamAScore, teamBScore, scorers, manOfTheMatch, summary } = req.body;
+        const match = await Match.findByIdAndUpdate(
+            req.params.id,
+            {
+                result: { teamAScore, teamBScore, scorers, manOfTheMatch, summary }
+            },
+            { new: true }
+        );
+        if (!match) return res.status(404).json({ success: false, message: 'Match not found' });
+        res.json({ success: true, match });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Publish match result
+// @route   PUT /api/results/:id/publish
+// @access  Admin
+const publishResult = async (req, res) => {
+    try {
+        const match = await Match.findByIdAndUpdate(
+            req.params.id,
+            { resultPublished: true, status: 'finished' },
+            { new: true }
+        );
+        if (!match) return res.status(404).json({ success: false, message: 'Match not found' });
+
+        // Notify via socket
+        const io = req.app.get('io');
+        if (io) io.emit('match_updated', match);
+
+        res.json({ success: true, match });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// @desc    Get match history for timeline
+// @route   GET /api/results/history/timeline
+// @access  Private
+const getMatchHistory = async (req, res) => {
+    try {
+        const matches = await Match.find({
+            status: 'finished',
+            resultPublished: true
+        }).sort({ date: -1 });
+        res.json({ success: true, data: matches });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+module.exports = {
+    getMatches,
+    getMatchById,
+    createMatch,
+    openMatch,
+    joinMatch,
+    leaveMatch,
+    updateMatch,
+    deleteMatch,
+    saveResult,
+    publishResult,
+    getMatchHistory
+};

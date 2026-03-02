@@ -61,6 +61,7 @@ const startServer = async () => {
     app.all("/api/auth/*", toNodeHandler(auth));
 
     app.use("/api/matches", matchRoutes);
+    app.use("/api/results", require("./src/routes/results.routes"));
     app.use("/api/teams", teamRoutes);
     app.use("/api/attendance", attendanceRoutes);
     app.use("/api/notifications", notificationRoutes);
@@ -89,16 +90,20 @@ const startServer = async () => {
         for (const match of matches) {
           const startDateTime = new Date(match.date);
           const [startHours, startMinutes] = match.time.split(":");
-          startDateTime.setHours(parseInt(startHours), parseInt(startMinutes));
+          startDateTime.setHours(parseInt(startHours), parseInt(startMinutes), 0, 0);
 
-          const endDateTime = new Date(match.date);
+          const endDateTime = new Date(startDateTime);
           if (match.endingTime) {
             const [endHours, endMinutes] = match.endingTime.split(":");
-            endDateTime.setHours(parseInt(endHours), parseInt(endMinutes));
+            endDateTime.setHours(parseInt(endHours), parseInt(endMinutes), 0, 0);
+
+            // If ending time is numerically before starting time, it must be the next day
+            if (endDateTime < startDateTime) {
+              endDateTime.setDate(endDateTime.getDate() + 1);
+            }
           } else {
-            // Default behavior if endingTime is missing (e.g. legacy matches): 
-            // Assume match lasts 2 hours for 'finished' logic
-            endDateTime.setHours(startDateTime.getHours() + 2, startDateTime.getMinutes());
+            // Default: Match lasts 2 hours
+            endDateTime.setHours(startDateTime.getHours() + 2);
           }
 
           let newStatus = null;
@@ -112,11 +117,14 @@ const startServer = async () => {
           if (newStatus) {
             match.status = newStatus;
             await match.save();
-            io.emit("match_status_changed", {
-              matchId: match._id,
-              status: newStatus,
-            });
-            console.log(`Match ${match._id} (${match.title}) status updated to: ${newStatus}`);
+            const io = app.get("io");
+            if (io) {
+              io.emit("match_status_changed", {
+                matchId: match._id,
+                status: newStatus,
+              });
+            }
+            console.log(`[Cron] Match ${match._id} (${match.title}) status updated to: ${newStatus} (End: ${endDateTime.toLocaleString()})`);
           }
         }
       } catch (err) {

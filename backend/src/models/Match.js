@@ -65,6 +65,26 @@ const matchSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    resultPublished: {
+        type: Boolean,
+        default: false,
+    },
+    result: {
+        teamAScore: { type: Number, default: 0 },
+        teamBScore: { type: Number, default: 0 },
+        scorers: [{
+            playerId: { type: String, default: '' },
+            playerName: { type: String, default: '' },
+            goals: { type: Number, default: 0 },
+            assists: { type: Number, default: 0 },
+            team: { type: String, enum: ['A', 'B'] }
+        }],
+        manOfTheMatch: {
+            id: { type: String, default: null },
+            name: { type: String, default: '' }
+        },
+        summary: { type: String, default: '' }
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Match', matchSchema);
