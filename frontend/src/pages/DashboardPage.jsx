@@ -82,7 +82,7 @@ const DashboardPage = () => {
     };
 
     const upcomingMatches = matches.filter(m =>
-        (m.status === 'open' || m.status === 'ongoing') && !isMatchPast(m)
+        (m.status === 'draft' || m.status === 'open' || m.status === 'ongoing') && !isMatchPast(m)
     );
     const nextMatch = userMatches.find(m =>
         (m.status === 'open' || m.status === 'ongoing') && !isMatchPast(m)
