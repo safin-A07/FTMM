@@ -70,20 +70,7 @@ const ScoreDetailModal = ({ match, onClose }) => {
                             {/* Teams & Score */}
                             <div className="bg-white/5 border border-white/10 rounded-xl p-4">
                                 <div className="flex items-center justify-between gap-4">
-                                    {/* Team A */}
-                                    <div className="flex-1 text-center">
-                                        <p className="font-semibold text-white mb-2 line-clamp-1">
-                                            {match.teamA?.name || 'Team A'}
-                                        </p>
-                                        <p className="text-4xl font-display font-bold text-[#16A34A]">
-                                            {result.teamAScore || 0}
-                                        </p>
-                                    </div>
-
-                                    {/* VS */}
-                                    <div className="text-gray-500 font-semibold">vs</div>
-
-                                    {/* Team B */}
+                                    {/* Team B (Left) */}
                                     <div className="flex-1 text-center">
                                         <p className="font-semibold text-white mb-2 line-clamp-1">
                                             {match.teamB?.name || 'Team B'}
@@ -92,43 +79,23 @@ const ScoreDetailModal = ({ match, onClose }) => {
                                             {result.teamBScore || 0}
                                         </p>
                                     </div>
+
+                                    {/* VS */}
+                                    <div className="text-gray-500 font-semibold">vs</div>
+
+                                    {/* Team A (Right) */}
+                                    <div className="flex-1 text-center">
+                                        <p className="font-semibold text-white mb-2 line-clamp-1">
+                                            {match.teamA?.name || 'Team A'}
+                                        </p>
+                                        <p className="text-4xl font-display font-bold text-[#16A34A]">
+                                            {result.teamAScore || 0}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Goal Scorers - Team A */}
-                            {result.scorers?.some(s => s.team === 'A') && (
-                                <div>
-                                    <h3 className="font-semibold text-[#16A34A] mb-3">
-                                        {match.teamA?.name || 'Team A'} Scorers
-                                    </h3>
-                                    <div className="space-y-2">
-                                        {result.scorers
-                                            .filter(s => s.team === 'A')
-                                            .map((scorer, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-3"
-                                                >
-                                                    <div>
-                                                        <p className="text-white font-medium">{scorer.playerName}</p>
-                                                        {(scorer.goals || scorer.assists) && (
-                                                            <p className="text-xs text-gray-400">
-                                                                {scorer.goals ? `${scorer.goals} goal${scorer.goals !== 1 ? 's' : ''}` : ''}
-                                                                {scorer.goals && scorer.assists ? ' · ' : ''}
-                                                                {scorer.assists ? `${scorer.assists} assist${scorer.assists !== 1 ? 's' : ''}` : ''}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    {scorer.goals > 0 && (
-                                                        <span className="text-lg font-bold text-[#16A34A]">⚽ ×{scorer.goals}</span>
-                                                    )}
-                                                </div>
-                                            ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Goal Scorers - Team B */}
+                            {/* Goal Scorers - Team B (Left/First) */}
                             {result.scorers?.some(s => s.team === 'B') && (
                                 <div>
                                     <h3 className="font-semibold text-blue-400 mb-3">
@@ -154,6 +121,39 @@ const ScoreDetailModal = ({ match, onClose }) => {
                                                     </div>
                                                     {scorer.goals > 0 && (
                                                         <span className="text-lg font-bold text-blue-400">⚽ ×{scorer.goals}</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Goal Scorers - Team A (Right/Second) */}
+                            {result.scorers?.some(s => s.team === 'A') && (
+                                <div>
+                                    <h3 className="font-semibold text-[#16A34A] mb-3">
+                                        {match.teamA?.name || 'Team A'} Scorers
+                                    </h3>
+                                    <div className="space-y-2">
+                                        {result.scorers
+                                            .filter(s => s.team === 'A')
+                                            .map((scorer, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className="flex items-center justify-between bg-white/5 border border-white/10 rounded-lg p-3"
+                                                >
+                                                    <div>
+                                                        <p className="text-white font-medium">{scorer.playerName}</p>
+                                                        {(scorer.goals || scorer.assists) && (
+                                                            <p className="text-xs text-gray-400">
+                                                                {scorer.goals ? `${scorer.goals} goal${scorer.goals !== 1 ? 's' : ''}` : ''}
+                                                                {scorer.goals && scorer.assists ? ' · ' : ''}
+                                                                {scorer.assists ? `${scorer.assists} assist${scorer.assists !== 1 ? 's' : ''}` : ''}
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                    {scorer.goals > 0 && (
+                                                        <span className="text-lg font-bold text-[#16A34A]">⚽ ×{scorer.goals}</span>
                                                     )}
                                                 </div>
                                             ))}

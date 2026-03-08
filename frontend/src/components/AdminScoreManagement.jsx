@@ -135,18 +135,6 @@ const AdminScoreManagement = ({ match, onClose }) => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        {match.teamA?.name || 'Team A'} Score
-                                    </label>
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        value={teamAScore}
-                                        onChange={(e) => setTeamAScore(e.target.value)}
-                                        className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-center text-2xl font-bold focus:outline-none focus:border-[#16A34A]"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-300 mb-2">
                                         {match.teamB?.name || 'Team B'} Score
                                     </label>
                                     <input
@@ -154,6 +142,18 @@ const AdminScoreManagement = ({ match, onClose }) => {
                                         min="0"
                                         value={teamBScore}
                                         onChange={(e) => setTeamBScore(e.target.value)}
+                                        className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-center text-2xl font-bold focus:outline-none focus:border-[#16A34A]"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        {match.teamA?.name || 'Team A'} Score
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={teamAScore}
+                                        onChange={(e) => setTeamAScore(e.target.value)}
                                         className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-center text-2xl font-bold focus:outline-none focus:border-[#16A34A]"
                                     />
                                 </div>
@@ -180,8 +180,8 @@ const AdminScoreManagement = ({ match, onClose }) => {
                                                 onChange={(e) => updateScorer(idx, 'team', e.target.value)}
                                                 className="col-span-2 px-2 py-2 bg-white/5 border border-white/10 rounded text-white text-sm focus:outline-none focus:border-[#16A34A]"
                                             >
-                                                <option value="A">Team A</option>
                                                 <option value="B">Team B</option>
+                                                <option value="A">Team A</option>
                                             </select>
 
                                             {/* Player Name */}
