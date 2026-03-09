@@ -70,6 +70,15 @@ const startServer = async () => {
       res.json({ success: true, message: "⚽ FTMM Backend is running!" });
     });
 
+    app.get("/", (req, res) => {
+      res.json({ 
+        success: true, 
+        message: "⚽ Welcome to FTMM Backend API!",
+        health: "/api/health",
+        version: "1.0.0"
+      });
+    });
+
     // 6. Socket.io handling
     io.on("connection", (socket) => {
       console.log(`🔌 Client connected: ${socket.id}`);
