@@ -1,11 +1,8 @@
 import { createAuthClient } from "better-auth/react"
 
 const getAuthBaseURL = () => {
-    // Production: use backend URL from environment
-    if (import.meta.env.VITE_API_URL) {
-        return import.meta.env.VITE_API_URL.replace('/api', '') + "/api/auth"
-    }
-    // Development: use relative path (works with proxy)
+    // Always use same-origin to ensure OAuth cookies work correctly.
+    // Both dev (Vite proxy) and prod (Vercel rewrite) proxy /api/* to the backend.
     return window.location.origin + "/api/auth"
 }
 

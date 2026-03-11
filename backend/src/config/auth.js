@@ -8,10 +8,10 @@ const trimTrailingSlash = (url = "") => url.replace(/\/+$/, "");
 // Prefer same-origin auth URL through frontend/proxy when CLIENT_URL is present.
 // Fallback to BETTER_AUTH_URL for direct backend-hosted auth routes.
 const authOrigin = trimTrailingSlash(
+  process.env.CLIENT_URL ||
   process.env.BETTER_AUTH_URL ||
-    process.env.AUTH_ORIGIN ||
-    process.env.CLIENT_URL ||
-    "http://localhost:5000",
+  process.env.AUTH_ORIGIN ||
+  "http://localhost:5000",
 );
 
 const auth = betterAuth({
